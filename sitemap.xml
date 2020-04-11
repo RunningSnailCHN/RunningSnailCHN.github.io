@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://yoursite.com/tags/index.html</loc>
+    
+    <lastmod>2020-04-11T14:47:07.770Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/archive/index.html</loc>
+    
+    <lastmod>2020-04-11T14:47:07.504Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/categories/index.html</loc>
+    
+    <lastmod>2020-04-11T14:47:07.504Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/about/index.html</loc>
+    
+    <lastmod>2020-04-11T14:47:07.503Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/404.html</loc>
+    
+    <lastmod>2020-04-11T14:47:07.500Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/04/11/MySQL%25E5%259F%25BA%25E7%25A1%2580/</loc>
+    
+    <lastmod>2020-04-11T11:41:34.161Z</lastmod>
+    
+  </url>
+  
+</urlset>
