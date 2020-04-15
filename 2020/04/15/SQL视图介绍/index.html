@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          MYSQL视图介绍 - undefined
+        
+    </title>
+
+    <link rel="canonical" href="http://yoursite.com/2020/04/15/SQL视图介绍/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#MySQL" title="MySQL">MySQL</a>
+                            
+                        </div>
+                        <h1>MYSQL视图介绍</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by RunningSnailCHN on
+                            2020-04-15
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">RunningSnailCHN</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/"> 主页 </a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/"> 关于我 </a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/"> 文档 </a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/"> 分类 </a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/"> 标签 </a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="视图的概念"><a href="#视图的概念" class="headerlink" title="视图的概念"></a>视图的概念</h1><ul>
+<li>视图是一种虚拟的表，具有和物理表相同的功能。</li>
+<li>视图通常是有一个表或者多个表的行或列的子集。</li>
+<li>可以对视图进行增，改，查，操作</li>
+<li>对视图的修改不影响基本表</li>
+<li>相比多表查询，它使得获取数据更容易</li>
+</ul>
+<h1 id="视图的优点"><a href="#视图的优点" class="headerlink" title="视图的优点"></a>视图的优点</h1><ul>
+<li>视图能够简化用户的操作，用户完全不需要关心后面对应的表的结构、关联条件和筛选条件</li>
+<li>视图使用户能以多种角度看待同一数据</li>
+<li>视图为数据库提供了一定程度的逻辑独立性</li>
+<li>视图能够对机密数据提供安全保护，用户只能访问被允许查询的结果集</li>
+<li>视图的结构确定后，可以屏蔽表结构变化对用户的影响，源表增加列对视图没有影响</li>
+</ul>
+<h1 id="视图的操作"><a href="#视图的操作" class="headerlink" title="视图的操作"></a>视图的操作</h1><h2 id="视图的创建"><a href="#视图的创建" class="headerlink" title="视图的创建"></a>视图的创建</h2><p>基本格式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE [OR REPLACE] </span><br><span class="line">　　[ALGORITHM &#x3D; &#123;UNDEFINED | MERGE | TEMPTABLE&#125;]  </span><br><span class="line">　　[DEFINER &#x3D; &#123; user | CURRENT_USER &#125;]  </span><br><span class="line">　　[SQL SECURITY &#123; DEFINER | INVOKER &#125;]</span><br><span class="line">    VIEW view_name [(column_list)]</span><br><span class="line">    AS select_statement</span><br><span class="line">   [WITH [CASCADED | LOCAL] CHECK OPTION]</span><br></pre></td></tr></table></figure><br>释义：</p>
+<ol>
+<li><p>OR REPLACE：表示替换已有视图</p>
+</li>
+<li><p>ALGORITHM选项：选择在处理定义视图的select语句中使用的方法</p>
+</li>
+</ol>
+<ul>
+<li>UNDEFINED：MySQL将自动选择所要使用的算法</li>
+<li>MERGE：将视图的语句与视图定义合并起来，使得视图定义的某一部分取代语句的对应部分</li>
+<li>TEMPTABLE：将视图的结果存入临时表，然后使用临时表执行语句</li>
+<li>缺省ALGORITHM选项等同于ALGORITHM = UNDEFINED</li>
+</ul>
+<ol>
+<li>DEFINER选项：指出谁是视图的创建者或定义者</li>
+</ol>
+<ul>
+<li>definer= ‘用户名’@’登录主机’</li>
+<li>如果不指定该选项，则创建视图的用户就是定义者，指定关键字CURRENT_USER(当前用户)和不指定该选项效果相同</li>
+</ul>
+<ol>
+<li>SQL SECURITY选项：要查询一个视图，首先必须要具有对视图的select权限。</li>
+</ol>
+<ul>
+<li>SQL SECURITY DEFINER：定义(创建)视图的用户必须对视图所访问的表具有select权限，也就是说将来其他用户访问表的时候以定义者的身份，此时其他用户并没有访问权限。</li>
+<li>SQL SECURITY INVOKER：访问视图的用户必须对视图所访问的表具有select权限。</li>
+<li>缺省SQL SECURITY选项等同于SQL SECURITY DEFINER　</li>
+</ul>
+<ol>
+<li><p>select_statement：表示select语句</p>
+</li>
+<li><p>[WITH [CASCADED | LOCAL] CHECK OPTION]：对视图所做的DML操作的结果，不能违反视图的WHERE条件的限制,保证更新视图是在该视图的权限范围之内。</p>
+</li>
+</ol>
+<ul>
+<li><p>cascade是默认值，表示更新视图的时候，要满足检查所有的视图和表的相关条件</p>
+</li>
+<li><p>local表示更新视图的时候，只检查将要更新的视图本身,对嵌套视图(定义在另一个视图的上面的视图)不检查其底层的视图　</p>
+</li>
+</ul>
+<blockquote>
+<p>建议：推荐使用 WHIT [CASCADED|LOCAL] CHECK OPTION选项，可以保证数据的安全性 </p>
+</blockquote>
+<h2 id="查看视图"><a href="#查看视图" class="headerlink" title="查看视图"></a>查看视图</h2><ul>
+<li>使用<code>SHOW CREATE VIEW view_name;</code> 查看视图定义</li>
+<li>像一个普通表那样使用 SELECT 查询视图内容</li>
+<li>有关视图的信息记录在information_schema数据库中的views表中<br><code>select * from information_schema.views  where TABLE_NAME=view_name;</code></li>
+</ul>
+<h2 id="视图的更改"><a href="#视图的更改" class="headerlink" title="视图的更改"></a>视图的更改</h2><ul>
+<li>CREATE OR REPLACE VIEW语句修改视图定义</li>
+<li>ALTER语句修改视图<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ALTER</span><br><span class="line">    [ALGORITHM &#x3D; &#123;UNDEFINED | MERGE | TEMPTABLE&#125;]</span><br><span class="line">    [DEFINER &#x3D; &#123; user | CURRENT_USER &#125;]</span><br><span class="line">    [SQL SECURITY &#123; DEFINER | INVOKER &#125;]</span><br><span class="line">VIEW view_name [(column_list)]</span><br><span class="line">AS select_statement</span><br><span class="line">    [WITH [CASCADED | LOCAL] CHECK OPTION]</span><br></pre></td></tr></table></figure></li>
+<li>更新视图中数据 （DML操作）<br>因为视图本身没有数据，对视图进行的数据操作最终都体现在基表（用来创建视图的表叫做基表）中，但是，并不是所有的视图都可以做DML操作。</li>
+</ul>
+<p>下面情形中不能做DML操作：</p>
+<ul>
+<li>select子句中包含distinct</li>
+<li>select子句中包含组函数</li>
+<li>select语句中包含group by子句</li>
+<li>select语句中包含order by子句</li>
+<li>select语句中包含union 、union all等集合运算符</li>
+<li>where子句中包含相关子查询</li>
+<li>from子句中包含多个表</li>
+<li>如果视图中有计算列，则不能更新</li>
+<li>如果基表中有某个具有非空约束的列未出现在视图定义中，则不能做insert操作</li>
+</ul>
+<h2 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h2><p>　删除视图时，只能删除视图的定义，不会删除数据，也就是说不动基表。<br>使用drop 删除视图，语法和删除表类型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DROP VIEW [IF EXISTS]   </span><br><span class="line">view_name [, view_name] ...</span><br></pre></td></tr></table></figure>
+<hr>
+<END>
+
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/04/11/MySQL基础/" data-toggle="tooltip" data-placement="top" title="MySQL基础">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <div class="comment_notes">
+                    <p>
+                        This is copyright.
+                    </p>
+                </div>
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+
+<script src="/js/music-player/player.js"></script>
+
+
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#视图的概念"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">视图的概念</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#视图的优点"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">视图的优点</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#视图的操作"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">视图的操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#视图的创建"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">视图的创建</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#查看视图"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">查看视图</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#视图的更改"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">视图的更改</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#删除视图"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">删除视图</span></a></li></ol></li></ol>
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/RunningSnailCHN">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; RunningSnailCHN 2020 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://yoursite.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;HERE&quot;,&quot;🍀&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

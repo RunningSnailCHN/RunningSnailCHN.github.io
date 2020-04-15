@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>MYSQL视图介绍</title>
+      <link href="/2020/04/15/SQL%E8%A7%86%E5%9B%BE%E4%BB%8B%E7%BB%8D/"/>
+      <url>/2020/04/15/SQL%E8%A7%86%E5%9B%BE%E4%BB%8B%E7%BB%8D/</url>
+      
+        <content type="html"><![CDATA[<h1 id="视图的概念"><a href="#视图的概念" class="headerlink" title="视图的概念"></a>视图的概念</h1><ul><li>视图是一种虚拟的表，具有和物理表相同的功能。</li><li>视图通常是有一个表或者多个表的行或列的子集。</li><li>可以对视图进行增，改，查，操作</li><li>对视图的修改不影响基本表</li><li>相比多表查询，它使得获取数据更容易</li></ul><h1 id="视图的优点"><a href="#视图的优点" class="headerlink" title="视图的优点"></a>视图的优点</h1><ul><li>视图能够简化用户的操作，用户完全不需要关心后面对应的表的结构、关联条件和筛选条件</li><li>视图使用户能以多种角度看待同一数据</li><li>视图为数据库提供了一定程度的逻辑独立性</li><li>视图能够对机密数据提供安全保护，用户只能访问被允许查询的结果集</li><li>视图的结构确定后，可以屏蔽表结构变化对用户的影响，源表增加列对视图没有影响</li></ul><h1 id="视图的操作"><a href="#视图的操作" class="headerlink" title="视图的操作"></a>视图的操作</h1><h2 id="视图的创建"><a href="#视图的创建" class="headerlink" title="视图的创建"></a>视图的创建</h2><p>基本格式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE [OR REPLACE] </span><br><span class="line">　　[ALGORITHM &#x3D; &#123;UNDEFINED | MERGE | TEMPTABLE&#125;]  </span><br><span class="line">　　[DEFINER &#x3D; &#123; user | CURRENT_USER &#125;]  </span><br><span class="line">　　[SQL SECURITY &#123; DEFINER | INVOKER &#125;]</span><br><span class="line">    VIEW view_name [(column_list)]</span><br><span class="line">    AS select_statement</span><br><span class="line">   [WITH [CASCADED | LOCAL] CHECK OPTION]</span><br></pre></td></tr></table></figure><br>释义：</p><ol><li><p>OR REPLACE：表示替换已有视图</p></li><li><p>ALGORITHM选项：选择在处理定义视图的select语句中使用的方法</p></li></ol><ul><li>UNDEFINED：MySQL将自动选择所要使用的算法</li><li>MERGE：将视图的语句与视图定义合并起来，使得视图定义的某一部分取代语句的对应部分</li><li>TEMPTABLE：将视图的结果存入临时表，然后使用临时表执行语句</li><li>缺省ALGORITHM选项等同于ALGORITHM = UNDEFINED</li></ul><ol><li>DEFINER选项：指出谁是视图的创建者或定义者</li></ol><ul><li>definer= ‘用户名’@’登录主机’</li><li>如果不指定该选项，则创建视图的用户就是定义者，指定关键字CURRENT_USER(当前用户)和不指定该选项效果相同</li></ul><ol><li>SQL SECURITY选项：要查询一个视图，首先必须要具有对视图的select权限。</li></ol><ul><li>SQL SECURITY DEFINER：定义(创建)视图的用户必须对视图所访问的表具有select权限，也就是说将来其他用户访问表的时候以定义者的身份，此时其他用户并没有访问权限。</li><li>SQL SECURITY INVOKER：访问视图的用户必须对视图所访问的表具有select权限。</li><li>缺省SQL SECURITY选项等同于SQL SECURITY DEFINER　</li></ul><ol><li><p>select_statement：表示select语句</p></li><li><p>[WITH [CASCADED | LOCAL] CHECK OPTION]：对视图所做的DML操作的结果，不能违反视图的WHERE条件的限制,保证更新视图是在该视图的权限范围之内。</p></li></ol><ul><li><p>cascade是默认值，表示更新视图的时候，要满足检查所有的视图和表的相关条件</p></li><li><p>local表示更新视图的时候，只检查将要更新的视图本身,对嵌套视图(定义在另一个视图的上面的视图)不检查其底层的视图　</p></li></ul><blockquote><p>建议：推荐使用 WHIT [CASCADED|LOCAL] CHECK OPTION选项，可以保证数据的安全性 </p></blockquote><h2 id="查看视图"><a href="#查看视图" class="headerlink" title="查看视图"></a>查看视图</h2><ul><li>使用<code>SHOW CREATE VIEW view_name;</code> 查看视图定义</li><li>像一个普通表那样使用 SELECT 查询视图内容</li><li>有关视图的信息记录在information_schema数据库中的views表中<br><code>select * from information_schema.views  where TABLE_NAME=view_name;</code></li></ul><h2 id="视图的更改"><a href="#视图的更改" class="headerlink" title="视图的更改"></a>视图的更改</h2><ul><li>CREATE OR REPLACE VIEW语句修改视图定义</li><li>ALTER语句修改视图<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ALTER</span><br><span class="line">    [ALGORITHM &#x3D; &#123;UNDEFINED | MERGE | TEMPTABLE&#125;]</span><br><span class="line">    [DEFINER &#x3D; &#123; user | CURRENT_USER &#125;]</span><br><span class="line">    [SQL SECURITY &#123; DEFINER | INVOKER &#125;]</span><br><span class="line">VIEW view_name [(column_list)]</span><br><span class="line">AS select_statement</span><br><span class="line">    [WITH [CASCADED | LOCAL] CHECK OPTION]</span><br></pre></td></tr></table></figure></li><li>更新视图中数据 （DML操作）<br>因为视图本身没有数据，对视图进行的数据操作最终都体现在基表（用来创建视图的表叫做基表）中，但是，并不是所有的视图都可以做DML操作。</li></ul><p>下面情形中不能做DML操作：</p><ul><li>select子句中包含distinct</li><li>select子句中包含组函数</li><li>select语句中包含group by子句</li><li>select语句中包含order by子句</li><li>select语句中包含union 、union all等集合运算符</li><li>where子句中包含相关子查询</li><li>from子句中包含多个表</li><li>如果视图中有计算列，则不能更新</li><li>如果基表中有某个具有非空约束的列未出现在视图定义中，则不能做insert操作</li></ul><h2 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h2><p>　删除视图时，只能删除视图的定义，不会删除数据，也就是说不动基表。<br>使用drop 删除视图，语法和删除表类型：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DROP VIEW [IF EXISTS]   </span><br><span class="line">view_name [, view_name] ...</span><br></pre></td></tr></table></figure><hr><END>]]></content>
+      
+      
+      <categories>
+          
+          <category> MySQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MySQL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>MySQL基础</title>
       <link href="/2020/04/11/MySQL%E5%9F%BA%E7%A1%80/"/>
       <url>/2020/04/11/MySQL%E5%9F%BA%E7%A1%80/</url>
